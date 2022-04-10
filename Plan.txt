@@ -1,0 +1,17 @@
+1. Give it a directory with all the users divided into sub-directories
+2. Run the analysis additevely for each email
+3. Output the results at the end
+
+
+Things to quantify
+1. Frequency of words
+2. 3-gram
+3. 4-gram
+4. Message Length
+5. Average word length
+6. Average sentence length
+7. Contraction use
+8. Punctuation
+9. Sign-ons and Sign-offs
+10. Hapax Lagonomas / 2 word use
+
