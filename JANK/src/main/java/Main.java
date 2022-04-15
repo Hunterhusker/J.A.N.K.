@@ -1,4 +1,6 @@
 
+import com.jank.Analyzer;
+
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -57,6 +59,12 @@ public class Main {
         } else {
             System.out.println("Invalid Directory!");
         }
+
+        if (!subjectEmails.isEmpty()) {
+            Analyzer analyzer = new Analyzer(subjectEmails);
+            analyzer.runAnalysis();
+        }
+
     }
 
     // Given a mime message, look for the key word "-----Original Message-----"
