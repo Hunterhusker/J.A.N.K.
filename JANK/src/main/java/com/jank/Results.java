@@ -6,7 +6,7 @@ public class Results {
 
     // Add vars
     private HashMap<String, Integer> wordCounts, gramCounts2, gramCounts3, wordGram2, wordGram3, puncCounts;
-    private double uncommonRatio;
+    private double uncommonRatio, avgSentenceWordLen, avgSentenceCharLen, avgWordLen, avgMessageWordLen, avgMessageCharLen;
 
     public Results() {
         // blank for now
@@ -16,6 +16,14 @@ public class Results {
 
     public void printToFile() {
         // Makes the file for the person
+    }
+
+    public void setContentLenData(double[] vals) {
+        avgSentenceWordLen = vals[0];
+        avgSentenceCharLen = vals[1];
+        avgWordLen = vals[2];
+        avgMessageWordLen = vals[3];
+        avgMessageCharLen = vals[4];
     }
 
     public HashMap<String, Integer> getWordCounts() {

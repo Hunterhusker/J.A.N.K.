@@ -29,13 +29,15 @@ public class Analyzer {
 
         //results.get(0).setPuncCounts(puncCounts(emails.get(0)));
 
-        try {
-            results.get(0).setUncommonRatio(uncommonWords(emails.get(0)));
-        } catch (IOException e) {
+        avgParser(emails.get(0));
 
-        }
+//        try {
+//            results.get(0).setUncommonRatio(uncommonWords(emails.get(0)));
+//        } catch (IOException e) {
+//
+//        }
 
-        printAnalysis(); // output to the file
+        //printAnalysis(); // output to the file
         return 0;
     }
 
@@ -92,19 +94,68 @@ public class Analyzer {
     }
 
     // Sentences
-    private double avgSentenceLen(ArrayList<String> emails) { // Hunter
-        // count len
 
-        return 0;
+    private double[] avgParser(ArrayList<String> emails) {
+        double returnVal[] = new double[5];
+
+        ArrayList<Integer> wordLen = new ArrayList<>();
+        ArrayList<Integer> charLen = new ArrayList<>();
+        ArrayList<Integer> wordCharLen = new ArrayList<>();
+        double totalWords = 0, totalChars = 0;
+
+        String str = "This is a test. Hopefully this works the way I want. Or else I will cry a lot.";
+
+        // for each email in the email list
+        for (String email : emails) {
+            Scanner sc = new Scanner(email);
+            sc.useDelimiter(" |\\n");
+
+            int words = 0, chars = 0;
+
+            while (sc.hasNext()) {
+                String tmp = sc.next();
+
+                // If tmp ends w/ a period, question mark, or an exclamation point end the sentence counting
+                if (tmp.length() != 0 && (tmp.contains(".") || tmp.contains("?") || tmp.contains("!"))) {//(tmp.charAt(tmp.length() - 1) == '.' || tmp.charAt(tmp.length() - 1) == '?')) {
+                    wordLen.add(++words);
+
+                    chars += tmp.length();
+                    charLen.add(chars);
+                    wordCharLen.add(tmp.length() - 1);
+
+                    totalChars += chars;
+                    totalWords += words;
+
+                    words = 0;
+                    chars = 0;
+                }
+
+                // If we are reading a sentence again
+                if (!tmp.equals("")) {
+                    words++;
+                    chars += tmp.length() + 1; // Plus one for the space after
+                    wordCharLen.add(tmp.length());
+                }
+            }
+        }
+
+        returnVal[0] = avgHelper(wordLen);
+        returnVal[1] = avgHelper(charLen);
+        returnVal[2] = avgHelper(wordCharLen);
+        returnVal[3] = totalWords / emails.size();
+        returnVal[4] = totalChars / emails.size();
+
+        return returnVal;
     }
 
-    private double avgSentenceCharLen(ArrayList<String> emails) { // Hunter
-        return 0;
-    }
+    private double avgHelper(ArrayList<Integer> ints) {
+        double sum = 0;
 
-    // Words
-    private double avgWordLen(ArrayList<String> emails) { // Hunter
-        return 0;
+        for (int i = 0; i < ints.size(); i++) {
+            sum += ints.get(i);
+        }
+
+        return sum / ints.size();
     }
 
     // DONE
@@ -301,15 +352,6 @@ public class Analyzer {
 
 
         return resultMap;
-    }
-
-    // Message
-    private int messageLen(ArrayList<String> emails) { // Hunter
-        return 0;
-    }
-
-    private int messageCharLen(ArrayList<String> emails) { // Hunter
-        return 0;
     }
 
     private ArrayList<String> signOffs(ArrayList<String> emails) { // Hunter
