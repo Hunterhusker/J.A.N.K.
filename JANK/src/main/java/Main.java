@@ -23,10 +23,12 @@ public class Main {
 
         // The parent directory for all the subjects
         File mainDir = new File(args[0]);
+        ArrayList<String> names = new ArrayList<>();
 
         if (mainDir.exists()) {
             for (File subjectDir : mainDir.listFiles()) {
                 subjectEmails.add(new ArrayList<String>());
+                names.add(subjectDir.getName());
 
                 for (File emailFile : subjectDir.listFiles()) {
                     // Read in the data into fileData and
@@ -42,7 +44,9 @@ public class Main {
 
 
                     MimeMessage message = new MimeMessage(session, new ByteArrayInputStream(fileData.toString().getBytes()));
-                    subjectEmails.get(currentSubject).add(removeExcess(message));
+                    String cleannnnnn = removeExcess(message);
+                    if (!cleannnnnn.equals(""))
+                        subjectEmails.get(currentSubject).add(cleannnnnn);
                     emailCount++;
                 }
                 currentSubject++;
@@ -61,7 +65,7 @@ public class Main {
         }
 
         if (!subjectEmails.isEmpty()) {
-            Analyzer analyzer = new Analyzer(subjectEmails);
+            Analyzer analyzer = new Analyzer(subjectEmails, names);
             analyzer.runAnalysis();
         }
 
@@ -73,8 +77,22 @@ public class Main {
     public static String removeExcess(MimeMessage original) throws MessagingException, IOException {
         String cleaned = original.getContent().toString();
         String delimiter = "-----Original Message-----";
+        String otherDelimiter = "---------------------- Forwarded by";
+        String anotherDelimiter = "----- Forwarded by";
 
         int cutoff = cleaned.indexOf(delimiter);
+
+        if (cutoff != -1) {
+            cleaned = cleaned.substring(0, cutoff);
+        }
+
+        cutoff = cleaned.indexOf(otherDelimiter);
+
+        if (cutoff != -1) {
+            cleaned = cleaned.substring(0, cutoff);
+        }
+
+        cutoff = cleaned.indexOf(anotherDelimiter);
 
         if (cutoff != -1) {
             cleaned = cleaned.substring(0, cutoff);

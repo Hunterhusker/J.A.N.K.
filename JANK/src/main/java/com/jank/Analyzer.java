@@ -8,73 +8,43 @@ public class Analyzer {
     private ArrayList<ArrayList<String>> emails;
     private ArrayList<Results> results;
 
-    public Analyzer(ArrayList<ArrayList<String>> emails) {
+    public Analyzer(ArrayList<ArrayList<String>> emails, ArrayList<String> names) {
         this.emails = emails;
         results = new ArrayList<>();
 
         // Populate w/ empty results
         for (int i = 0; i < emails.size(); i++) {
-            results.add(new Results());
+            results.add(new Results(names.get(i)));
         }
     }
 
     public int runAnalysis() {
-        // Method to call the different things to analyze the emails
-        //results.get(0).setWordCounts(wordCounts(emails.get(0)));
-        //results.get(0).setGramCounts2(nCharacterGram(2, emails.get(0)));
-        //results.get(0).setGramCounts3(nCharacterGram(3, emails.get(0)));
+        for (int i = 0; i < emails.size(); i++) {
+            // Method to call the different things to analyze the emails
+            results.get(i).setWordCounts(wordCounts(emails.get(i)));
+            results.get(i).setGramCounts2(nCharacterGram(2, emails.get(i)));
+            results.get(i).setGramCounts3(nCharacterGram(3, emails.get(i)));
 
-        //results.get(0).setWordGram2(nWordGram(2, emails.get(0)));
-        //results.get(0).setWordGram3(nWordGram(3, emails.get(0)));
+            results.get(i).setWordGram2(nWordGram(2, emails.get(i)));
+            results.get(i).setWordGram3(nWordGram(3, emails.get(i)));
 
-        //results.get(0).setPuncCounts(puncCounts(emails.get(0)));
+            results.get(i).setPuncCounts(puncCounts(emails.get(i)));
 
-        avgParser(emails.get(0));
+            results.get(i).setContentLenData(avgParser(emails.get(i)));
 
-//        try {
-//            results.get(0).setUncommonRatio(uncommonWords(emails.get(0)));
-//        } catch (IOException e) {
-//
-//        }
+            try {
+                results.get(i).setUncommonRatio(uncommonWords(emails.get(i)));
+            } catch (IOException e) {
+
+            }
+
+            results.get(i).printToFile();
+        }
+
+
 
         //printAnalysis(); // output to the file
         return 0;
-    }
-
-    private void printAnalysis() {
-
-        // Sort and output a hashmap
-        //sortAndOutputHashMap(results.get(0).getWordCounts());
-
-        //sortAndOutputHashMap(results.get(0).getGramCounts2());
-        //sortAndOutputHashMap(results.get(0).getGramCounts3());
-
-        //sortAndOutputHashMap(results.get(0).getWordGram2());
-        //sortAndOutputHashMap(results.get(0).getWordGram3());
-
-        //sortAndOutputHashMap(results.get(0).getPuncCounts());
-
-        System.out.println("The ratio: " + results.get(0).getUncommonRatio());
-
-        //        for (int i = 0; i < emails.size(); i++) {
-//            results.get(i).printToFile();
-//        }
-    }
-
-    private void sortAndOutputHashMap(HashMap<String, Integer> hm) {
-        List<Map.Entry<String, Integer>> sortedWordList = sortHashMap(hm);
-        for (Map.Entry<String, Integer> word : sortedWordList) {
-            System.out.println(word.getKey() + " | " + word.getValue());
-        }
-    }
-
-    private List<Map.Entry<String, Integer>> sortHashMap(HashMap<String, Integer> map) {
-        List<Map.Entry<String, Integer>> sortedList = new LinkedList<>(map.entrySet());
-
-        // Sort the linked list
-        Collections.sort(sortedList, (object1, object2) -> (object1.getValue()).compareTo(object2.getValue()));
-
-        return sortedList;
     }
 
     /**
@@ -88,6 +58,7 @@ public class Analyzer {
         res = email.replaceAll("\\p{Punct}", "");
         res = res.replaceAll("\n", " ");
         res = res.replaceAll("\t", " ");
+        res = res.replaceAll("\r", " ");
         res = res.toLowerCase();
 
         return res;
@@ -139,11 +110,11 @@ public class Analyzer {
             }
         }
 
-        returnVal[0] = avgHelper(wordLen);
-        returnVal[1] = avgHelper(charLen);
-        returnVal[2] = avgHelper(wordCharLen);
-        returnVal[3] = totalWords / emails.size();
-        returnVal[4] = totalChars / emails.size();
+        returnVal[0] = avgHelper(wordLen); // words per sentence
+        returnVal[1] = avgHelper(charLen); // total characters in sentence
+        returnVal[2] = avgHelper(wordCharLen); // average characters per word
+        returnVal[3] = totalWords / emails.size(); // average words / email
+        returnVal[4] = totalChars / emails.size(); // average chars per email
 
         return returnVal;
     }
@@ -168,7 +139,7 @@ public class Analyzer {
 
         try {
             // Read in all of the things
-            BufferedReader reader = new BufferedReader(new FileReader("src/resources/1-1000.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("src/1-1000.txt"));
             String line = reader.readLine();
 
             while (line != null) {
