@@ -7,7 +7,7 @@ import java.util.*;
 public class Results {
 
     // Add vars
-    private HashMap<String, Integer> wordCounts, gramCounts2, gramCounts3, wordGram2, wordGram3, puncCounts;
+    private HashMap<String, Integer> wordCounts, gramCounts2, gramCounts3, wordGram2, wordGram3, puncCounts, uniqueWords;
     private double uncommonRatio;
     private double avgSentenceWordLen;
     private double avgSentenceCharLen;
@@ -120,6 +120,17 @@ public class Results {
                 writer.write(word + "\n");
             }
 
+            /////////////////////////
+            writer.write("\n\nUncommon Word Counts-------\n");
+            sortedWordList = sortHashMap(uniqueWords);
+
+            stopper = sortedWordList.size();
+
+            for (int x = sortedWordList.size() - 1; x > stopper - 101 && x > -1; x--) {
+                Map.Entry<String, Integer> word = sortedWordList.get(x);
+                writer.write(word + "\n");
+            }
+
             writer.close();
 
         } catch (Exception e) {
@@ -190,6 +201,14 @@ public class Results {
 
     public void setPuncCounts(HashMap<String, Integer> puncCounts) {
         this.puncCounts = puncCounts;
+    }
+
+    public HashMap<String, Integer> getUniqueWords() {
+        return uniqueWords;
+    }
+
+    public void setUniqueWords(HashMap<String, Integer> uniqueWords) {
+        this.uniqueWords = uniqueWords;
     }
 
     public double getUncommonRatio() {
