@@ -38,12 +38,11 @@ public class Analyzer {
 
             }
 
+            results.get(i).setUniqueWords(uncommonWordUse(emails.get(i)));
+
             results.get(i).printToFile();
         }
 
-
-
-        //printAnalysis(); // output to the file
         return 0;
     }
 
@@ -139,7 +138,7 @@ public class Analyzer {
 
         try {
             // Read in all of the things
-            BufferedReader reader = new BufferedReader(new FileReader("src/1-1000.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("JANK/src/google-10000-english-usa.txt"));
             String line = reader.readLine();
 
             while (line != null) {
@@ -169,6 +168,44 @@ public class Analyzer {
 
 
         return (uncommon / total);
+    }
+
+    private HashMap<String, Integer> uncommonWordUse(ArrayList<String> emails) {
+        HashMap<String, Integer> uncommonWords = new HashMap<>();
+        ArrayList<String> commons = new ArrayList<>();
+
+        try {
+            // Read in all of the common words
+            BufferedReader reader = new BufferedReader(new FileReader("JANK/src/google-10000-english-usa.txt"));
+            String line = reader.readLine();
+
+            while (line != null) {
+                commons.add(line);
+                line = reader.readLine();
+            }
+
+            reader.close();
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+
+        for (String email : emails) {
+            String newEmail = cleanEmail(email);
+
+            String[] split = newEmail.split(" ");
+
+            for (String s : split) {
+                if (!commons.contains(s)) {
+                    if (uncommonWords.containsKey(s) && !s.equals("")) {
+                        uncommonWords.put(s, uncommonWords.get(s) + 1);
+                    } else {
+                        uncommonWords.put(s, 1);
+                    }
+                }
+            }
+        }
+
+        return uncommonWords;
     }
 
     // DONE
